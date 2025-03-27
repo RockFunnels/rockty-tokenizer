@@ -14,7 +14,6 @@ class RocktyPaymentsSDK {
      * @param {string} [config.apiBaseUrl] - URL base da API (opcional)
      */
     constructor(config) {
-      // Validação de parâmetros obrigatórios
       if (!config || !config.apiKey) {
         throw new Error('RocktyPaymentsSDK: apiKey é obrigatória');
       }
@@ -25,7 +24,6 @@ class RocktyPaymentsSDK {
         apiBaseUrl: config.apiBaseUrl
       };
   
-      // Carrega a biblioteca do Pagar.me
       this._loadPagarmeLibrary();
     }
   
@@ -62,7 +60,6 @@ class RocktyPaymentsSDK {
      * @private
      */
     _initPagarmeClient() {
-      // Chaves de encriptação do Pagar.me (substitua pelas suas)
       const keys = {
         sandbox: 'pk_test_L6K0QePCoiOP072l',
         production: 'pk_live_SUACHAVEDELIVEAQUI'
@@ -100,10 +97,8 @@ class RocktyPaymentsSDK {
           throw new Error('Dados do cartão são obrigatórios');
         }
   
-        // Garantir que a biblioteca está carregada
         await this._ensureLibraryLoaded();
-  
-        // Cria o token com a biblioteca do Pagar.me
+ 
         const tokenData = {
           card: {
             number: cardData.card.number,
@@ -114,16 +109,13 @@ class RocktyPaymentsSDK {
           }
         };
   
-        // Tokeniza o cartão
         const pagarmeToken = await this.pagarmeClient.tokens.create(tokenData);
         
-        // Notifica o backend Rockty (opcional, sem enviar dados sensíveis)
         if (pagarmeToken && pagarmeToken.id) {
           try {
             await this._notifyTokenCreation(pagarmeToken);
           } catch (notifyError) {
             console.warn('Aviso: Falha ao notificar criação do token', notifyError);
-            // Continuamos mesmo com falha na notificação
           }
         }
         
@@ -140,7 +132,6 @@ class RocktyPaymentsSDK {
      * @param {Object} tokenData - Dados do token criado
      */
     async _notifyTokenCreation(tokenData) {
-      // Extrair apenas dados não sensíveis
       const tokenInfo = {
         token_id: tokenData.id,
         last_digits: tokenData.last_digits,
@@ -211,7 +202,6 @@ class RocktyPaymentsSDK {
         return false;
       }
   
-      // Remove espaços e traços
       const sanitized = cardNumber.replace(/[\s-]/g, '');
       
       if (!/^\d+$/.test(sanitized)) {
@@ -249,11 +239,9 @@ class RocktyPaymentsSDK {
       if (!cardNumber || typeof cardNumber !== 'string') {
         return null;
       }
-  
-      // Remove espaços e traços
+ 
       const sanitized = cardNumber.replace(/[\s-]/g, '');
       
-      // Regex para detectar bandeiras
       const patterns = {
         visa: /^4/,
         mastercard: /^(5[1-5]|2[2-7])\d{14}$/,
@@ -291,7 +279,6 @@ class RocktyPaymentsSDK {
     }
   }
   
-  // Exporta para uso em diferentes ambientes
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = RocktyPaymentsSDK;
   } else if (typeof define === 'function' && define.amd) {
