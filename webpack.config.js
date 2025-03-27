@@ -9,7 +9,7 @@ const path = require('path');
       entry: './src/rockty-tokenizer-sdk.js',
       output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: isProduction ? 'rockty-payments-sdk.min.js' : 'rockty-tokenizer-sdk.js',
+        filename: isProduction ? 'rockty-tokenizer-sdk.min.js' : 'rockty-tokenizer-sdk.js',
         library: 'RocktyPaymentsSDK',
         libraryTarget: 'umd',
         libraryExport: 'default',

@@ -16,7 +16,7 @@ O SDK Rockty Tokenizer oferece uma solução para tokenização segura de cartõ
 ### Via CDN (recomendado)
 
 ```html
-<script src="https://cdn.rockty.com/payments-sdk/v1/rockty-payments-sdk.min.js"></script>
+<script src="https://cdn.rockty.com/payments-sdk/v1/rockty-tokenizer-sdk.min.js"></script>
 ```
 
 ### Download direto
@@ -27,29 +27,28 @@ Baixe o arquivo `rockty-tokenizer-sdk.js` e inclua-o em seu projeto:
 <script src="path/to/rockty-tokenizer-sdk.js"></script>
 ```
 
-### NPM (para projetos com bundlers)
+### NPM
 
 ```bash
-npm install rockty-payments-sdk --save
+npm install rockty-tokenizer-sdk --save
 ```
 
 E então importe:
 
 ```javascript
-import RocktyPaymentsSDK from 'rockty-payments-sdk';
+import RocktyPaymentsSDK from 'rockty-tokenizer-sdk';
 ```
 
 ## Início Rápido
 
 ```javascript
 // Inicializar o SDK
-const rocktyPayments = new RocktyPaymentsSDK({
+const rocktyTokenizer = new RocktyPaymentsSDK({
     apiKey: 'SUA_API_KEY', // Obtenha no dashboard Rockty
-    environment: 'sandbox'  // 'sandbox' ou 'production'
 });
 
 // Criar token de cartão
-rocktyPayments.createCardToken({
+rocktyTokenizer.createCardToken({
     card: {
         number: '4111111111111111',
         holder_name: 'NOME DO TITULAR',
@@ -76,7 +75,7 @@ Acesse seu [Dashboard Rockty](https://dashboard.rockty.com) e navegue até a se�
 ### 2. Inicialize o SDK
 
 ```javascript
-const rocktyPayments = new RocktyPaymentsSDK({
+const rocktyTokenizer = new RocktyPaymentsSDK({
     apiKey: 'SUA_API_KEY',
     environment: 'sandbox' // Use 'production' para ambiente de produção
 });
@@ -136,7 +135,7 @@ document.getElementById('payment-form').addEventListener('submit', async functio
         };
         
         // Criar token do cartão
-        const token = await rocktyPayments.createCardToken(cardData);
+        const token = await rocktyTokenizer.createCardToken(cardData);
         
         // Enviar o token para seu servidor
         const response = await fetch('/api/process-payment', {
@@ -172,8 +171,8 @@ app.post('/api/process-payment', async (req, res) => {
         const { token, amount } = req.body;
         
         // Chamar API Rockty para processar o pagamento
-        const response = await axios.post('https://api.rockty.com/payments', {
-            token_id: token,
+        const response = await axios.post('https://api.rockty.com/payments/v1/card', {
+            token: token,
             amount: amount,
             currency: 'BRL',
             description: 'Compra em sua loja'
@@ -196,7 +195,7 @@ app.post('/api/process-payment', async (req, res) => {
 ### Inicialização
 
 ```javascript
-const rocktyPayments = new RocktyPaymentsSDK(config);
+const rocktyTokenizer = new RocktyPaymentsSDK(config);
 ```
 
 #### Parâmetros de configuração
@@ -204,7 +203,6 @@ const rocktyPayments = new RocktyPaymentsSDK(config);
 | Parâmetro    | Tipo     | Obrigatório | Descrição                                        |
 |--------------|----------|-------------|--------------------------------------------------|
 | apiKey       | string   | Sim         | Sua chave de API Rockty                          |
-| environment  | string   | Não         | 'sandbox' ou 'production'. Padrão: 'sandbox'     |
 | apiBaseUrl   | string   | Não         | URL base da API. Normalmente não precisa alterar |
 
 ### Métodos
@@ -214,7 +212,7 @@ const rocktyPayments = new RocktyPaymentsSDK(config);
 Cria um token para o cartão informado.
 
 ```javascript
-const token = await rocktyPayments.createCardToken({
+const token = await rocktyTokenizer.createCardToken({
     card: {
         number: '4111111111111111',
         holder_name: 'NOME DO TITULAR',
@@ -230,7 +228,7 @@ const token = await rocktyPayments.createCardToken({
 Valida se um número de cartão é válido usando o algoritmo de Luhn.
 
 ```javascript
-const isValid = rocktyPayments.validateCardNumber('4111111111111111');
+const isValid = rocktyTokenizer.validateCardNumber('4111111111111111');
 // retorna: true
 ```
 
@@ -239,7 +237,7 @@ const isValid = rocktyPayments.validateCardNumber('4111111111111111');
 Detecta a bandeira do cartão baseado no número.
 
 ```javascript
-const brand = rocktyPayments.detectCardBrand('4111111111111111');
+const brand = rocktyTokenizer.detectCardBrand('4111111111111111');
 // retorna: 'visa'
 ```
 
@@ -248,7 +246,7 @@ const brand = rocktyPayments.detectCardBrand('4111111111111111');
 Formata o número do cartão com espaços para melhor visualização.
 
 ```javascript
-const formatted = rocktyPayments.formatCardNumber('4111111111111111');
+const formatted = rocktyTokenizer.formatCardNumber('4111111111111111');
 // retorna: '4111 1111 1111 1111'
 ```
 
