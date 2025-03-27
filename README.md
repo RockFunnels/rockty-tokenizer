@@ -16,7 +16,7 @@ O SDK Rockty Tokenizer oferece uma solução para tokenização segura de cartõ
 ### Via CDN (recomendado)
 
 ```html
-<script src="https://cdn.rockty.com/payments-sdk/v1/rockty-tokenizer-sdk.min.js"></script>
+<script src="https://cdn.rockty.com.br/rck/tokenizer/rockty-tokenizer-sdk.min.js"></script>
 ```
 
 ### Download direto
