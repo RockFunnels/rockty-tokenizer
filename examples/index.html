@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo de Integração - Rockty Payments</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .payment-form {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .card-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .card-row .form-group {
+            flex: 1;
+        }
+        
+        button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        button:hover {
+            background-color: #0055aa;
+        }
+        
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        #result.success {
+            background-color: #e6ffec;
+            border: 1px solid #b4d9b4;
+            display: block;
+        }
+        
+        #result.error {
+            background-color: #ffecec;
+            border: 1px solid #d9b4b4;
+            display: block;
+        }
+        
+        code {
+            display: block;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Integração Rockty Payments</h1>
+    <p>Este exemplo demonstra como integrar o SDK de pagamentos da Rockty em sua aplicação.</p>
+    
+    <div class="payment-form">
+        <h2>Formulário de Pagamento</h2>
+        <form id="payment-form">
+            <div class="form-group">
+                <label for="card-number">Número do Cartão</label>
+                <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
+            </div>
+            
+            <div class="form-group">
+                <label for="card-holder">Nome do Titular</label>
+                <input type="text" id="card-holder" placeholder="Como está no cartão">
+            </div>
+            
+            <div class="card-row">
+                <div class="form-group">
+                    <label for="card-expiry-month">Mês</label>
+                    <input type="text" id="card-expiry-month" placeholder="MM" maxlength="2">
+                </div>
+                
+                <div class="form-group">
+                    <label for="card-expiry-year">Ano</label>
+                    <input type="text" id="card-expiry-year" placeholder="AAAA" maxlength="4">
+                </div>
+                
+                <div class="form-group">
+                    <label for="card-cvv">CVV</label>
+                    <input type="text" id="card-cvv" placeholder="123" maxlength="4">
+                </div>
+            </div>
+            
+            <button type="submit" id="submit-button">Tokenizar Cartão</button>
+        </form>
+    </div>
+    
+    <div id="result">
+        <h3>Resultado</h3>
+        <p id="result-message"></p>
+        <code id="result-data"></code>
+    </div>
+    
+    <!-- Carregar o SDK da Rockty Payments -->
+    <script src="rockty-tokenizer-sdk.js"></script>
+    
+    <script>
+        // Inicializar o SDK com sua chave de API
+        const rocktyPayments = new RocktyPaymentsSDK({
+            apiKey: 'SEU_CLIENT_TOKEN_AQUI',
+            environment: 'sandbox'
+        });
+        
+        // Formatar número do cartão enquanto digita
+        document.getElementById('card-number').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            e.target.value = rocktyPayments.formatCardNumber(value);
+            
+            // Detectar e mostrar a bandeira
+            const brand = rocktyPayments.detectCardBrand(value);
+            if (brand) {
+                console.log('Bandeira detectada:', brand);
+            }
+        });
+        
+        // Manipular envio do formulário
+        document.getElementById('payment-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Mostrar estado de carregamento
+            const button = document.getElementById('submit-button');
+            const originalText = button.textContent;
+            button.textContent = 'Processando...';
+            button.disabled = true;
+            
+            // Ocultar resultados anteriores
+            document.getElementById('result').className = '';
+            document.getElementById('result').style.display = 'none';
+            
+            try {
+                // Coletar dados do formulário
+                const cardData = {
+                    card: {
+                        number: document.getElementById('card-number').value.replace(/\D/g, ''),
+                        holder_name: document.getElementById('card-holder').value,
+                        exp_month: document.getElementById('card-expiry-month').value,
+                        exp_year: document.getElementById('card-expiry-year').value,
+                        cvv: document.getElementById('card-cvv').value
+                    }
+                };
+                
+                // Validação básica
+                if (!rocktyPayments.validateCardNumber(cardData.card.number)) {
+                    throw new Error('Número de cartão inválido');
+                }
+                
+                // Criar token do cartão
+                const token = await rocktyPayments.createCardToken(cardData);
+                
+                // Exibir resultado de sucesso
+                document.getElementById('result').className = 'success';
+                document.getElementById('result-message').textContent = 'Token gerado com sucesso!';
+                document.getElementById('result-data').textContent = JSON.stringify(token, null, 2);
+                document.getElementById('result').style.display = 'block';
+                
+                // Aqui você enviaria o token para seu servidor para processamento adicional
+                console.log('Token gerado:', token);
+                
+            } catch (error) {
+                // Exibir resultado de erro
+                document.getElementById('result').className = 'error';
+                document.getElementById('result-message').textContent = 'Erro: ' + error.message;
+                
+                if (error.details) {
+                    document.getElementById('result-data').textContent = JSON.stringify(error.details, null, 2);
+                }
+                
+                document.getElementById('result').style.display = 'block';
+                console.error('Erro ao tokenizar:', error);
+            } finally {
+                // Restaurar botão
+                button.textContent = originalText;
+                button.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
