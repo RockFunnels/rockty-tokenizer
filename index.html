@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RocktyTokenizerSDK - Página de Teste</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            padding-left: 15px;
+            padding-right: 15px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            background-color: #f1f8ff;
+            border-bottom: 1px solid #dee2e6;
+            font-weight: 600;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+        .credit-card-wrap {
+            padding: 20px;
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .credit-card-number {
+            font-size: 22px;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+        .credit-card-info {
+            display: flex;
+            justify-content: space-between;
+        }
+        .credit-card-holder {
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+        .credit-card-expiry {
+            font-size: 16px;
+        }
+        .badge-success {
+            background-color: #28a745;
+        }
+        .badge-danger {
+            background-color: #dc3545;
+        }
+        .code-block {
+            background-color: #272822;
+            color: #f8f8f2;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+        .toolbar {
+            text-align: right;
+            margin-bottom: 5px;
+        }
+        .toolbar button {
+            background: transparent;
+            border: none;
+            color: #aaa;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .toolbar button:hover {
+            color: white;
+        }
+        #test-cards {
+            cursor: pointer;
+        }
+        .brand-icon {
+            height: 36px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="mb-4 text-center">
+            <h1 class="display-5 fw-bold">RocktyTokenizerSDK</h1>
+            <p class="lead">Página de desenvolvimento e testes para o SDK de tokenização de cartões</p>
+        </header>
+
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Área de Visualização do Cartão -->
+                <div class="credit-card-wrap mb-4">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div id="card-brand">
+                            <img src="https://cdn-icons-png.flaticon.com/512/349/349221.png" alt="card brand" class="brand-icon" />
+                        </div>
+                        <div>ROCKTY</div>
+                    </div>
+                    <div class="credit-card-number" id="card-display">•••• •••• •••• ••••</div>
+                    <div class="credit-card-info">
+                        <div class="credit-card-holder" id="holder-display">NOME DO TITULAR</div>
+                        <div class="credit-card-expiry" id="expiry-display">MM/AA</div>
+                    </div>
+                </div>
+
+                <!-- Formulário de Tokenização -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Tokenização de Cartão
+                    </div>
+                    <div class="card-body">
+                        <form id="tokenizer-form">
+                            <div class="mb-3">
+                                <label for="card-number" class="form-label">Número do Cartão</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" id="test-cards" data-bs-toggle="dropdown">
+                                        Cartões de Teste
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#" data-number="4111111111111111">Visa (4111...)</a></li>
+                                        <li><a class="dropdown-item" href="#" data-number="5555555555554444">Mastercard (5555...)</a></li>
+                                        <li><a class="dropdown-item" href="#" data-number="378282246310005">American Express (3782...)</a></li>
+                                        <li><a class="dropdown-item" href="#" data-number="6362970000457013">Elo (6362...)</a></li>
+                                        <li><a class="dropdown-item" href="#" data-number="6062826786276634">Hipercard (6062...)</a></li>
+                                    </ul>
+                                </div>
+                                <div class="form-text" id="card-validation-message"></div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="card-holder" class="form-label">Nome do Titular</label>
+                                <input type="text" class="form-control" id="card-holder" placeholder="Como está no cartão">
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="card-expiry-month" class="form-label">Mês</label>
+                                    <select class="form-select" id="card-expiry-month">
+                                        <option value="">Mês</option>
+                                        <option value="01">01</option>
+                                        <option value="02">02</option>
+                                        <option value="03">03</option>
+                                        <option value="04">04</option>
+                                        <option value="05">05</option>
+                                        <option value="06">06</option>
+                                        <option value="07">07</option>
+                                        <option value="08">08</option>
+                                        <option value="09">09</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="card-expiry-year" class="form-label">Ano</label>
+                                    <select class="form-select" id="card-expiry-year">
+                                        <option value="">Ano</option>
+                                        <!-- Preenchido via JavaScript -->
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <label for="card-cvv" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="card-cvv" placeholder="123" maxlength="4">
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary" id="tokenize-button">Tokenizar Cartão</button>
+                            <button type="button" class="btn btn-outline-secondary" id="reset-form">Limpar</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Configurações do SDK -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Configurações do SDK
+                    </div>
+                    <div class="card-body">
+                        <form id="sdk-config-form">
+                            <div class="mb-3">
+                                <label for="api-key" class="form-label">API Key</label>
+                                <input type="text" class="form-control" id="api-key" value="seu_client_token_aqui">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="environment" class="form-label">Ambiente</label>
+                                <select class="form-select" id="environment">
+                                    <option value="sandbox">Sandbox</option>
+                                    <option value="production">Produção</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="debug-mode" checked>
+                                <label class="form-check-label" for="debug-mode">Modo Debug</label>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-success">Aplicar Configurações</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Resultado da Tokenização -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Resultado da Tokenização</span>
+                        <span id="result-badge" class="badge rounded-pill"></span>
+                    </div>
+                    <div class="card-body">
+                        <div id="result-container">
+                            <p class="text-muted">Nenhum token gerado ainda. Preencha o formulário acima e clique em "Tokenizar Cartão".</p>
+                        </div>
+                        
+                        <div class="code-block d-none" id="result-code">
+                            <div class="toolbar">
+                                <button id="copy-result">Copiar</button>
+                            </div>
+                            <pre><code id="result-json"></code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Código de Integração -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Código de Integração
+                    </div>
+                    <div class="card-body">
+                        <p>Copie este código para integrar o SDK em seu projeto:</p>
+                        
+                        <ul class="nav nav-tabs" id="codeTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="html-tab" data-bs-toggle="tab" data-bs-target="#html" type="button" role="tab">HTML</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="js-tab" data-bs-toggle="tab" data-bs-target="#js" type="button" role="tab">JavaScript</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="node-tab" data-bs-toggle="tab" data-bs-target="#node" type="button" role="tab">Node.js</button>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content mt-3" id="codeTabsContent">
+                            <div class="tab-pane fade show active" id="html" role="tabpanel">
+                                <div class="code-block">
+                                    <div class="toolbar">
+                                        <button class="copy-code">Copiar</button>
+                                    </div>
+<pre><code>&lt;!-- Incluir o SDK via CDN -->
+&lt;script src="https://cdn.rockty.com/tokenizer-sdk/v1/rockty-tokenizer-sdk.min.js">&lt;/script>
+
+&lt;script>
+  // Inicializar o SDK
+  const rocktyTokenizer = new RocktyTokenizerSDK({
+    apiKey: 'SUA_API_KEY',
+    environment: 'sandbox'
+  });
+  
+  // Tokenizar um cartão
+  rocktyTokenizer.createCardToken({
+    card: {
+      number: '4111111111111111',
+      holder_name: 'NOME DO TITULAR',
+      exp_month: '12',
+      exp_year: '2025',
+      cvv: '123'
+    }
+  })
+  .then(token => {
+    console.log('Token gerado:', token.id);
+    // Envie este token para seu servidor
+  })
+  .catch(error => {
+    console.error('Erro:', error.message);
+  });
+&lt;/script></code></pre>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="js" role="tabpanel">
+                                <div class="code-block">
+                                    <div class="toolbar">
+                                        <button class="copy-code">Copiar</button>
+                                    </div>
+<pre><code>// Formulário de pagamento
+document.getElementById('payment-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  try {
+    // Inicializar o SDK
+    const rocktyTokenizer = new RocktyTokenizerSDK({
+      apiKey: 'SUA_API_KEY',
+      environment: 'sandbox'
+    });
+    
+    // Coletar dados do formulário
+    const cardData = {
+      card: {
+        number: document.getElementById('card-number').value.replace(/\D/g, ''),
+        holder_name: document.getElementById('card-holder').value,
+        exp_month: document.getElementById('card-expiry-month').value,
+        exp_year: document.getElementById('card-expiry-year').value,
+        cvv: document.getElementById('card-cvv').value
+      }
+    };
+    
+    // Validar número do cartão
+    if (!rocktyTokenizer.validateCardNumber(cardData.card.number)) {
+      throw new Error('Número de cartão inválido');
+    }
+    
+    // Criar token do cartão
+    const token = await rocktyTokenizer.createCardToken(cardData);
+    
+    // Enviar o token para seu servidor
+    const response = await fetch('/api/process-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        token: token.id,
+        amount: 1000, // Valor em centavos
+        // outros dados da transação...
+      })
+    });
+    
+    const result = await response.json();
+    // Tratar resultado
+    
+  } catch (error) {
+    console.error('Erro:', error.message);
+    // Mostrar mensagem de erro
+  }
+});</code></pre>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="node" role="tabpanel">
+                                <div class="code-block">
+                                    <div class="toolbar">
+                                        <button class="copy-code">Copiar</button>
+                                    </div>
+<pre><code>// Exemplo de processamento no backend (Node.js + Express)
+const express = require('express');
+const axios = require('axios');
+const router = express.Router();
+
+// Rota para processar pagamento
+router.post('/process-payment', async (req, res) => {
+  try {
+    const { token, amount, description } = req.body;
+    
+    // Validar dados
+    if (!token || !amount) {
+      return res.status(400).json({ 
+        error: true, 
+        message: 'Token e valor são obrigatórios' 
+      });
+    }
+    
+    // Chamar API Rockty para processar o pagamento
+    const response = await axios.post('https://api.rockty.com/payments', {
+      token_id: token,
+      amount: amount,
+      currency: 'BRL',
+      description: description || 'Compra na loja'
+    }, {
+      headers: {
+        'Authorization': `Bearer ${process.env.ROCKTY_SECRET_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    // Retornar resultado
+    res.json(response.data);
+  } catch (error) {
+    console.error('Erro ao processar pagamento:', error);
+    
+    res.status(400).json({ 
+      error: true, 
+      message: error.response?.data?.message || error.message 
+    });
+  }
+});
+
+module.exports = router;</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="pt-3 mt-4 text-muted border-top text-center">
+            <p>&copy; 2023 Rockty Tecnologia. Todos os direitos reservados.</p>
+            <p>
+                <a href="#" class="text-decoration-none me-3">Documentação</a>
+                <a href="#" class="text-decoration-none me-3">Suporte</a>
+                <a href="#" class="text-decoration-none">GitHub</a>
+            </p>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SDK da Rockty (carregado dinamicamente via JavaScript) -->
+    <script>
+        // Função para carregar o SDK dinamicamente
+        function loadSDK(callback) {
+            // Em desenvolvimento, use a versão local
+            const sdkPath = './dist/rockty-tokenizer-sdk.min.js';
+            
+            const script = document.createElement('script');
+            script.src = sdkPath;
+            script.async = true;
+            
+            script.onload = () => {
+                console.log('SDK carregado com sucesso');
+                if (callback) callback();
+            };
+            
+            script.onerror = () => {
+                console.error('Falha ao carregar o SDK');
+                alert('Não foi possível carregar o SDK. Verifique se o arquivo existe no caminho: ' + sdkPath);
+            };
+            
+            document.head.appendChild(script);
+        }
+
+        // Configuração do SDK
+        let rocktyTokenizer;
+
+        function initSDK() {
+            const apiKey = document.getElementById('api-key').value;
+            const environment = document.getElementById('environment').value;
+            const debugMode = document.getElementById('debug-mode').checked;
+            
+            try {
+                rocktyTokenizer = new RocktyTokenizerSDK({
+                    apiKey: apiKey,
+                    environment: environment,
+                    debug: debugMode
+                });
+                
+                console.log('SDK inicializado com sucesso:', {
+                    apiKey,
+                    environment,
+                    debugMode
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('Erro ao inicializar SDK:', error);
+                alert('Erro ao inicializar SDK: ' + error.message);
+                return false;
+            }
+        }
+
+        // Função para popular anos do select
+        function populateYears() {
+            const yearSelect = document.getElementById('card-expiry-year');
+            const currentYear = new Date().getFullYear();
+            
+            for (let i = 0; i < 10; i++) {
+                const year = currentYear + i;
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            }
+        }
+
+        // Funções para manipulação do cartão visual
+        function updateCardDisplay() {
+            const cardNumber = document.getElementById('card-number').value;
+            const holderName = document.getElementById('card-holder').value;
+            const expiryMonth = document.getElementById('card-expiry-month').value || 'MM';
+            const expiryYear = document.getElementById('card-expiry-year').value || 'AA';
+            
+            // Atualizar número do cartão
+            document.getElementById('card-display').textContent = cardNumber || '•••• •••• •••• ••••';
+            
+            // Atualizar nome do titular
+            document.getElementById('holder-display').textContent = holderName.toUpperCase() || 'NOME DO TITULAR';
+            
+            // Atualizar data de expiração
+            document.getElementById('expiry-display').textContent = `${expiryMonth}/${expiryYear.toString().substr(-2)}`;
+            
+            // Atualizar bandeira, se o SDK estiver disponível
+            if (rocktyTokenizer && cardNumber) {
+                const brand = rocktyTokenizer.detectCardBrand(cardNumber);
+                updateCardBrand(brand);
+            }
+        }
+        
+        // Atualizar bandeira do cartão
+        function updateCardBrand(brand) {
+            const brandIcons = {
+                visa: 'https://cdn-icons-png.flaticon.com/512/349/349221.png',
+                mastercard: 'https://cdn-icons-png.flaticon.com/512/349/349228.png',
+                amex: 'https://cdn-icons-png.flaticon.com/512/349/349247.png',
+                elo: 'https://cdn-icons-png.flaticon.com/512/349/349230.png',
+                hipercard: 'https://cdn-icons-png.flaticon.com/512/349/349233.png',
+                default: 'https://cdn-icons-png.flaticon.com/512/633/633611.png'
+            };
+            
+            const brandImage = document.querySelector('#card-brand img');
+            brandImage.src = brandIcons[brand] || brandIcons.default;
+            brandImage.alt = brand || 'card';
+        }
+
+        // Validação de cartão
+        function validateCard() {
+            const cardNumber = document.getElementById('card-number').value.replace(/\D/g, '');
+            const messageEl = document.getElementById('card-validation-message');
+            
+            if (!cardNumber) {
+                messageEl.textContent = '';
+                return;
+            }
+            
+            if (rocktyTokenizer && rocktyTokenizer.validateCardNumber(cardNumber)) {
+                messageEl.textContent = 'Número de cartão válido';
+                messageEl.className = 'form-text text-success';
+                
+                const brand = rocktyTokenizer.detectCardBrand(cardNumber);
+                if (brand) {
+                    messageEl.textContent += ` (${brand.toUpperCase()})`;
+                }
+            } else {
+                messageEl.textContent = 'Número de cartão inválido';
+                messageEl.className = 'form-text text-danger';
+            }
+        }
+
+        // Função para mostrar resultado
+        function showResult(success, data) {
+            const resultBadge = document.getElementById('result-badge');
+            const resultContainer = document.getElementById('result-container');
+            const resultCode = document.getElementById('result-code');
+            const resultJson = document.getElementById('result-json');
+            
+            if (success) {
+                resultBadge.textContent = 'Sucesso';
+                resultBadge.className = 'badge rounded-pill bg-success';
+                
+                resultContainer.innerHTML = `
+                    <div class="alert alert-success">
+                        <h5>Token gerado com sucesso!</h5>
+                        <p>Token ID: <strong>${data.id}</strong></p>
+                        <p>Cartão: ${data.brand?.toUpperCase() || 'Desconhecido'} terminado em ${data.last_digits}</p>
+                    </div>
+                `;
+            } else {
+                resultBadge.textContent = 'Erro';
+                resultBadge.className = 'badge rounded-pill bg-danger';
+                
+                resultContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h5>Erro ao gerar token</h5>
+                        <p>${data.message || 'Ocorreu um erro inesperado'}</p>
+                    </div>
+                `;
+            }
+            
+            // Mostrar JSON completo
+            resultCode.classList.remove('d-none');
+            resultJson.textContent = JSON.stringify(data, null, 2);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Popular anos do select
+            populateYears();
+            
+            // Carregar SDK
+            loadSDK(function() {
+                initSDK();
+            });
+            
+            // Event listener para o formulário de configuração do SDK
+            document.getElementById('sdk-config-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                initSDK();
+            });
+            
+            // Event listeners para atualizar o display do cartão
+            const formInputs = ['card-number', 'card-holder', 'card-expiry-month', 'card-expiry-year'];
+            formInputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', updateCardDisplay);
+            });
+            
+            // Validação do cartão enquanto digita
+            document.getElementById('card-number').addEventListener('input', function(e) {
+                if (rocktyTokenizer) {
+                    // Formatar número do cartão
+                    const rawValue = e.target.value.replace(/\D/g, '');
+                    e.target.value = rocktyTokenizer.formatCardNumber(rawValue);
+                    
+                    // Validar cartão
+                    validateCard();
+                }
+            });
+            
+            // Cartões de teste
+            const testCardLinks = document.querySelectorAll('.dropdown-item[data-number]');
+            testCardLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const cardNumber = this.getAttribute('data-number');
+                    const cardInput = document.getElementById('card-number');
+                    
+                    if (rocktyTokenizer) {
+                        cardInput.value = rocktyTokenizer.formatCardNumber(cardNumber);
+                    } else {
+                        cardInput.value = cardNumber;
+                    }
+                    
+                    validateCard();
+                    updateCardDisplay();
+                });
+            });
+            
+            // Limpar formulário
+            document.getElementById('reset-form').addEventListener('click', function() {
+                document.getElementById('tokenizer-form').reset();
+                document.getElementById('card-validation-message').textContent = '';
+                updateCardDisplay();
+            });
+            
+            // Copiar resultado
+            document.getElementById('copy-result').addEventListener('click', function() {
+                const resultText = document.getElementById('result-json').textContent;
+                navigator.clipboard.writeText(resultText)
+                    .then(() => alert('Copiado para a área de transferência!'))
+                    .catch(err => console.error('Erro ao copiar:', err));
+            });
+            
+            // Copiar códigos de exemplo
+            document.querySelectorAll('.copy-code').forEach(button => {
+                button.addEventListener('click', function() {
+                    const codeBlock = this.closest('.code-block');
+                    const code = codeBlock.querySelector('code').textContent;
+                    
+                    navigator.clipboard.writeText(code)
+                        .then(() => alert('Código copiado para a área de transferência!'))
+                        .catch(err => console.error('Erro ao copiar:', err));
+                });
+            });
+            
+            // Tokenização do cartão
+            document.getElementById('tokenizer-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!rocktyTokenizer) {
+                    alert('SDK não está inicializado!');
+                    return;
+                }
+                
+                const tokenizeButton = document.getElementById('tokenize-button');
+                const originalText = tokenizeButton.textContent;
+                
+                try {
+                    // Mostrar estado de carregamento
+                    tokenizeButton.textContent = 'Processando...';
+                    tokenizeButton.disabled = true;
+                    
+                    // Coletar dados do formulário
+                    const cardData = {
+                        card: {
+                            number: document.getElementById('card-number').value.replace(/\D/g, ''),
+                            holder_name: document.getElementById('card-holder').value,
+                            exp_month: document.getElementById('card-expiry-month').value,
+                            exp_year: document.getElementById('card-expiry-year').value,
+                            cvv: document.getElementById('card-cvv').value
+                        }
+                    };
+                    
+                    // Validar cartão
+                    if (!rocktyTokenizer.validateCardNumber(cardData.card.number)) {
+                        throw new Error('Número de cartão inválido');
+                    }
+                    
+                    // Criar token
+                    const token = await rocktyTokenizer.createCardToken(cardData);
+                    
+                    // Mostrar resultado
+                    showResult(true, token);
+                    
+                } catch (error) {
+                    console.error('Erro ao tokenizar:', error);
+                    showResult(false, {
+                        message: error.message,
+                        code: error.code,
+                        details: error.details
+                    });
+                } finally {
+                    // Restaurar botão
+                    tokenizeButton.textContent = originalText;
+                    tokenizeButton.disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

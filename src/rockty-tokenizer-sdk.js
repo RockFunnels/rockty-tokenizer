@@ -1,10 +1,10 @@
 /**
- * RocktyPaymentsSDK
+ * RocktyTokenizerSDK
  * SDK de pagamentos para integração com a API Rockty
  * 
  * @version 1.0.0
  */
-class RocktyPaymentsSDK {
+class RocktyTokenizerSDK {
     /**
      * Inicializa o SDK Rockty Payments
      * 
@@ -15,7 +15,7 @@ class RocktyPaymentsSDK {
      */
     constructor(config) {
       if (!config || !config.apiKey) {
-        throw new Error('RocktyPaymentsSDK: apiKey é obrigatória');
+        throw new Error('RocktyTokenizerSDK: apiKey é obrigatória');
       }
   
       this.config = {
@@ -280,11 +280,11 @@ class RocktyPaymentsSDK {
   }
   
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = RocktyPaymentsSDK;
+    module.exports = RocktyTokenizerSDK;
   } else if (typeof define === 'function' && define.amd) {
     define([], function() {
-      return RocktyPaymentsSDK;
+      return RocktyTokenizerSDK;
     });
   } else {
-    window.RocktyPaymentsSDK = RocktyPaymentsSDK;
+    window.RocktyTokenizerSDK = RocktyTokenizerSDK;
   }

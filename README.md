@@ -36,14 +36,14 @@ npm install rockty-tokenizer-sdk --save
 E então importe:
 
 ```javascript
-import RocktyPaymentsSDK from 'rockty-tokenizer-sdk';
+import RocktyTokenizerSDK from 'rockty-tokenizer-sdk';
 ```
 
 ## Início Rápido
 
 ```javascript
 // Inicializar o SDK
-const rocktyTokenizer = new RocktyPaymentsSDK({
+const rocktyTokenizer = new RocktyTokenizerSDK({
     apiKey: 'SUA_API_KEY', // Obtenha no dashboard Rockty
 });
 
@@ -75,7 +75,7 @@ Acesse seu [Dashboard Rockty](https://dashboard.rockty.com) e navegue até a se�
 ### 2. Inicialize o SDK
 
 ```javascript
-const rocktyTokenizer = new RocktyPaymentsSDK({
+const rocktyTokenizer = new RocktyTokenizerSDK({
     apiKey: 'SUA_API_KEY',
     environment: 'sandbox' // Use 'production' para ambiente de produção
 });
@@ -195,7 +195,7 @@ app.post('/api/process-payment', async (req, res) => {
 ### Inicialização
 
 ```javascript
-const rocktyTokenizer = new RocktyPaymentsSDK(config);
+const rocktyTokenizer = new RocktyTokenizerSDK(config);
 ```
 
 #### Parâmetros de configuração
